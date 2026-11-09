@@ -1,0 +1,15 @@
+# Local
+*.dmp
+*.mdmp
+*.log
+.env
+.env.*
+*.pdb
+*.sym
+
+# Editors / OS
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store
