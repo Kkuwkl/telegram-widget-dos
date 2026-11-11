@@ -3,7 +3,42 @@
 The bug is a missing progress guarantee, not a missing size limit. Both should be
 added, in this order.
 
-## 1. Require progress (the actual fix)
+## What upstream did
+
+`twidget` `3e25003` (2026-11-11) implements a narrow version of item 1: it records
+whether the current command was read from the input, and `case 'Z'` bails out when it
+was not.
+
+```cpp
+bool explicit_cmd = false;
+if(std::isalpha(static_cast<unsigned char>(*s)))
+{
+    cmd          = *s++;
+    explicit_cmd = true;
+} else if(!cmd)
+{
+    return;
+}
+...
+case 'Z':
+    // closepath takes no arguments, so it never repeats
+    if(!explicit_cmd)
+    {
+        return;
+    }
+    close();
+    break;
+```
+
+The path then ends at the error and keeps what came before it, which is what SVG 2
+("Error handling in path data") asks for. The commit also adds three regression tests,
+one of which is `M0 0z4` itself, and `widget-sandbox` gained the matching corpus file
+`corpus/attacks/render-svg-path-closepath.html`.
+
+This closes the reported input. Items 2–4 below are still worth doing, because the
+`Close` case is only one instance of the class.
+
+## 1. Require progress (the general fix)
 
 After every parsed command, verify that the parser consumed input or advanced the
 cursor. If nothing was consumed, stop parsing the attribute.

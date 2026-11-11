@@ -80,3 +80,15 @@ It recovers an exact root cause from a stripped, RTTI-less 257 MB binary using o
 * one memory scan for the vector header.
 
 No debugger, no symbols, no vendor cooperation.
+
+## Postscript
+
+The widget runtime turned out to be published: the path parser is
+`litehtml/src/el_svg.cpp` in
+[`TelegramMessenger/twidget`](https://github.com/TelegramMessenger/twidget). Compared
+after the fact, the published source matches the reconstruction exactly — the "missing
+advance" at `0x43fd517` is the branch that skips `cmd = *s++` for a non-alphabetic
+byte, and `case 'Z'` calls `close()` without moving the cursor.
+
+The method is still the point: it produced the same answer from the shipped binary,
+before the source was consulted.

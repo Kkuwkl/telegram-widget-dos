@@ -43,11 +43,15 @@ area is empty.
 | Client | Version | Behaviour |
 |---|---|---|
 | Telegram Desktop, Windows x64 | **7.4.1** (build `157f5cfc85`, 2026-11-06) | empty widget → permanent freeze |
+| Telegram Desktop, Windows x64 | **7.4.2** (2026-11-11) | still affected — same `twidget` pin |
 | Telegram iOS | 13.2 | reported by the finder: sometimes the app is terminated, sometimes the client shows an "unsupported widget" fallback. Not confirmed with a crash log. |
 
 The payload is accepted by the production `sendWidget` endpoint (HTTP 200) and by the
 public widget sandbox, which does not hang — the failure is in the client-side parser.
 
+**Fixed upstream** in the widget runtime on 2026-11-11 (`twidget` commit `3e25003`), but
+not yet shipped in a desktop build: 7.4.2 and `tdesktop` `main` still pin the previous
+commit. See [`docs/05-timeline.md`](05-timeline.md).
 ## Root cause in one paragraph
 
 In the `twlite` SVG path parser, `Close` is a zero-operand command. When the parser
@@ -79,8 +83,9 @@ cap the number of ops inside the parser, not only in the painter.
 
 ## Disclosure status
 
-Discovered and reproduced on 2026-11-09. Vendor notification and fix status:
-see [`docs/05-timeline.md`](docs/05-timeline.md).
+Discovered and reproduced on 2026-11-09. Fixed upstream in the widget runtime on
+2026-11-11; not yet in a released desktop build. No vendor notification was sent by the
+finder. Details: [`docs/05-timeline.md`](docs/05-timeline.md).
 
 ## Repository contents
 
